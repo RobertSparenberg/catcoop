@@ -1,48 +1,31 @@
 package net.frozenchaos.catcoop.io;
 
-import com.pi4j.io.gpio.*;
+import com.pi4j.io.gpio.GpioPinDigitalOutput;
+import com.pi4j.io.gpio.PinState;
+import com.pi4j.io.gpio.RaspiPin;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
 
-public class Lights extends Component {
-    public void doSomething() {
-        try {
-            // get a handle to the GPIO controller
-            final GpioController gpio = GpioFactory.getInstance();
+import javax.annotation.PostConstruct;
 
-            final GpioPinDigitalOutput pin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_07, "PinLED", PinState.HIGH);
-            final GpioPinPwmOutput pwm = gpio.provisionSoftPwmOutputPin(RaspiPin.GPIO_29, "servo");
-            pwm.setPwm(50);
+@Service
+public class Lights {
+    private IoManager ioManager;
+    private GpioPinDigitalOutput led;
 
-            // creating the pin with parameter PinState.HIGH
-            // will instantly power up the pin
-            System.out.println("light is: ON");
+    @Autowired
+    public Lights(IoManager ioManager) {
+        this.ioManager = ioManager;
+    }
 
-            // wait 2 seconds
-            Thread.sleep(2000);
+    @PostConstruct
+    public void init() {
+        this.led = ioManager.getGpioController().provisionDigitalOutputPin(RaspiPin.GPIO_07, "LED", PinState.LOW);
+    }
 
-            // turn off GPIO 1
-            pin.low();
-            System.out.println("light is: OFF");
-
-            // wait 1 second
-            Thread.sleep(1000);
-
-            // turn on GPIO 1 for 1 second and then off
-            System.out.println("light is: ON for 1 second");
-            pin.pulse(1000, true);
-
-            Thread.sleep(1000);
-            pwm.setPwm(10);
-            Thread.sleep(2000);
-            pwm.setPwm(120);
-            Thread.sleep(2000);
-            pwm.setPwm(50);
-
-            // release the GPIO controller resources
-            gpio.shutdown();
-
-
-        } catch(Exception ignored) {
-            //do nothing
-        }
+    @Scheduled(fixedRate = 1000)
+    public void blink() {
+        this.led.setState(!this.led.getState().isHigh());
     }
 }
