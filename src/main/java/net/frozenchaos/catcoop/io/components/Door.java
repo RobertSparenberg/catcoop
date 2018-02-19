@@ -20,11 +20,13 @@ public class Door extends IoComponent {
 
     @Override
     public void init() {
+        System.out.println("Initializing door");
         servoPin = this.getIoManager().getGpioController().provisionPwmOutputPin(pin.getPin());
     }
 
     @Override
     public void destroy() {
+        System.out.println("Destroying door");
         this.getIoManager().getGpioController().unprovisionPin(servoPin);
     }
 

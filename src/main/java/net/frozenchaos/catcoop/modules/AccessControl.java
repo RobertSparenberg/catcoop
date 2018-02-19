@@ -1,4 +1,4 @@
-package net.frozenchaos.catcoop.catflap;
+package net.frozenchaos.catcoop.modules;
 
 import net.frozenchaos.catcoop.io.IoComponent;
 import net.frozenchaos.catcoop.io.IoComponentListener;
@@ -13,21 +13,31 @@ public class AccessControl implements IoComponentListener {
     private RfidReader rfidReader;
     private Door door;
     private Camera camera;
+    private Lights lights;
 
     @Autowired
     public AccessControl(IoManager ioManager) {
+        System.out.println("Starting access control");
+
         this.motionSensor = new MotionSensor(ioManager, IoPin.MOTION_SENSOR);
         this.rfidReader = new RfidReader(ioManager);
         this.door = new Door(ioManager, IoPin.DOOR_SERVO);
-        this.camera = new Camera();
+        this.camera = new Camera(ioManager);
+        this.lights = new Lights(ioManager, IoPin.LED1);
 
         this.motionSensor.addListener(this);
+        this.rfidReader.addListener(this);
     }
 
     @Override
     public void onIoComponentEvent(IoComponent component, int value) {
-        if(component == this.motionSensor && value == 1) {
-            camera.takeSnapshot();
+        if(component == this.motionSensor) {
+            if(value == 1) {
+                lights.setLed(true);
+                camera.takeSnapshot();
+            } else {
+                lights.setLed(false);
+            }
         }
     }
 

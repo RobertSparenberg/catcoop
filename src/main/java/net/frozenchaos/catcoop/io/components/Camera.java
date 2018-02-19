@@ -2,15 +2,21 @@ package net.frozenchaos.catcoop.io.components;
 
 import com.hopding.jrpicam.RPiCamera;
 import com.hopding.jrpicam.enums.Encoding;
-import org.springframework.stereotype.Component;
+import net.frozenchaos.catcoop.io.IoComponent;
+import net.frozenchaos.catcoop.io.IoManager;
 
 import java.io.IOException;
 
-@Component
-public class Camera {
+public class Camera extends IoComponent {
     private RPiCamera camera = null;
 
-    public Camera() {
+    public Camera(IoManager ioManager) {
+        super(ioManager);
+    }
+
+    @Override
+    public void init() {
+        System.out.println("Initializing camera");
         try {
             camera = new RPiCamera();
             camera.setToDefaults();
@@ -19,6 +25,11 @@ public class Camera {
             camera.setEncoding(Encoding.JPG);
         } catch(Exception ignored) {
         }
+        System.out.println("Initialized camera successfully");
+    }
+
+    @Override
+    public void destroy() {
     }
 
     public void takeSnapshot() {

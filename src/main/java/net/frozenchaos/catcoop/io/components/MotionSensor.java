@@ -1,6 +1,7 @@
 package net.frozenchaos.catcoop.io.components;
 
 import com.pi4j.io.gpio.GpioPinDigitalInput;
+import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 import net.frozenchaos.catcoop.io.IoComponentListener;
 import net.frozenchaos.catcoop.io.IoManager;
@@ -17,18 +18,24 @@ public class MotionSensor extends Sensor {
 
     @Override
     public void init() {
-        input = this.getIoManager().getGpioController().provisionDigitalInputPin(pin.getPin());
-        input.addListener((GpioPinListenerDigital) event -> {
-            for(IoComponentListener listener : this.getListeners()) {
-                listener.onIoComponentEvent(this, event.getState().isHigh() ? 1 : 0);
-            }
-        });
+        System.out.println("Motion sensor initialized");
+        input = this.getIoManager().getGpioController().provisionDigitalInputPin(this.pin.getPin());
+        input.addListener(new MotionSensorInputPinListener());
     }
 
     @Override
     public void destroy() {
-        if(input != null) {
-            this.getIoManager().getGpioController().unprovisionPin(input);
+        System.out.println("Destroying motion sensor");
+        this.getIoManager().getGpioController().unprovisionPin(input);
+    }
+
+    private class MotionSensorInputPinListener implements GpioPinListenerDigital {
+        @Override
+        public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
+            System.out.println("Motion sensor: " + event.getState());
+            for(IoComponentListener listener : MotionSensor.this.getListeners()) {
+                listener.onIoComponentEvent(MotionSensor.this, event.getState().isHigh() ? 1 : 0);
+            }
         }
     }
 }

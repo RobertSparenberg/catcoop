@@ -5,7 +5,8 @@ import com.pi4j.io.gpio.RaspiPin;
 
 public enum IoPin {
     MOTION_SENSOR(RaspiPin.GPIO_04),
-    DOOR_SERVO(RaspiPin.GPIO_26);
+    DOOR_SERVO(RaspiPin.GPIO_26),
+    LED1(RaspiPin.GPIO_07);
 
     private final Pin componentPin;
 

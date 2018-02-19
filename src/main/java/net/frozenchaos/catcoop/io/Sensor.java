@@ -11,6 +11,7 @@ public abstract class Sensor extends IoComponent {
     }
 
     public void addListener(IoComponentListener listener) {
+        System.out.println(this.getClass().getName() + " has registered " + listener.getClass().getName() + " as a listener");
         this.listeners.add(listener);
     }
 
