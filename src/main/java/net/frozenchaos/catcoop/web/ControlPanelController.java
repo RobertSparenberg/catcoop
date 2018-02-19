@@ -8,6 +8,8 @@ import com.pi4j.io.gpio.*;
 import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 import net.frozenchaos.catcoop.io.IoManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,11 +22,14 @@ import java.util.Map;
 @Controller
 @RequestMapping("/controlpanel")
 public class ControlPanelController {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     private IoManager ioManager;
     private Map<Integer, GpioPinDigital> pins = new HashMap<>();
 
     @Autowired
     public ControlPanelController(IoManager ioManager) {
+        logger.info("Initializing ControlPanelController");
         this.ioManager = ioManager;
     }
 
@@ -37,6 +42,7 @@ public class ControlPanelController {
     public String setPin(@RequestParam(value="pin") int pin,
                        @RequestParam(value="output") boolean isOutput,
                        @RequestParam(value="value") int value) {
+        logger.trace("ControlPanelController.setPin pin: " + pin + ", isOutput: " + isOutput + ", value: " + value);
         GpioController gpioController = ioManager.getGpioController();
         releasePin(gpioController, pin);
 

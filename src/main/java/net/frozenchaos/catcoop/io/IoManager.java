@@ -2,6 +2,8 @@ package net.frozenchaos.catcoop.io;
 
 import com.pi4j.io.gpio.GpioController;
 import com.pi4j.io.gpio.GpioFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Repository;
@@ -12,11 +14,13 @@ import java.util.List;
 
 @Repository
 public class IoManager implements ApplicationListener<ContextRefreshedEvent> {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final GpioController gpioController;
     private List<IoComponent> ioComponents = new ArrayList<>();
     private boolean started = false;
 
     public IoManager() {
+        logger.debug("Initializing IoManager");
         this.gpioController = GpioFactory.getInstance();
     }
 
@@ -25,14 +29,14 @@ public class IoManager implements ApplicationListener<ContextRefreshedEvent> {
     }
 
     public void registerIoComponent(IoComponent ioComponent) {
-        System.out.println("registering component: " + ioComponent.getClass().getName());
+        logger.debug("IoManager is registering component: " + ioComponent.getClass().getName());
         this.ioComponents.add(ioComponent);
     }
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         if(!this.started) {
-            System.out.println("IoManager is going to initialize "+ioComponents.size()+" components");
+            logger.trace("IoManager is going to initialize " + ioComponents.size() + " components");
             for(IoComponent ioComponent : ioComponents) {
                 ioComponent.init();
             }
@@ -42,10 +46,11 @@ public class IoManager implements ApplicationListener<ContextRefreshedEvent> {
 
     @PreDestroy
     public void destroy() {
-        System.out.println("IoManager is going to destroy components");
+        logger.debug("Destroying IoManager");
         for(IoComponent ioComponent : ioComponents) {
             ioComponent.destroy();
         }
         this.gpioController.shutdown();
+        logger.debug("Done destroying IoManager");
     }
 }
