@@ -1,21 +1,21 @@
 package net.frozenchaos.catcoop.io.components;
 
-import com.pi4j.io.gpio.GpioPinPwmOutput;
+import com.pi4j.component.servo.ServoDriver;
+import com.pi4j.component.servo.impl.GenericServo;
+import net.frozenchaos.catcoop.io.ComponentInitializationException;
 import net.frozenchaos.catcoop.io.IoComponent;
 import net.frozenchaos.catcoop.io.IoManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
 
 public class Door extends IoComponent {
-    private static final int UNLOCKED_PWM_VALUE = 20;
-    private static final int LOCKED_PWM_VALUE = 1000;
+    private static final float UNLOCKED_VALUE = 90;
+    private static final float LOCKED_VALUE = -90;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final IoPin pin;
-    private GpioPinPwmOutput servoPin;
-    private int unlocked = 0;
+    private GenericServo servo;
 
     public Door(IoManager ioManager, IoPin pin) {
         super(ioManager);
@@ -23,31 +23,29 @@ public class Door extends IoComponent {
     }
 
     @Override
-    public void init() {
+    public void init() throws ComponentInitializationException {
         logger.debug("Initializing Door on pin: " + this.pin.getPin().getAddress());
-        servoPin = this.getIoManager().getGpioController().provisionPwmOutputPin(pin.getPin());
+        try {
+            ServoDriver servoDriver = this.getIoManager().getServoProvider().getServoDriver(this.pin.getPin());
+            this.servo = new GenericServo(servoDriver, "Door Servo");
+        } catch(Exception e) {
+            throw new ComponentInitializationException(e);
+        }
     }
 
     @Override
     public void destroy() {
         logger.debug("Destroying Door on pin: " + this.pin.getPin().getAddress());
-        this.getIoManager().getGpioController().unprovisionPin(servoPin);
+//        this.getIoManager().getGpioController().unprovisionPin(this.servo.getServoDriver().getPin());
     }
 
     public void unlock() {
-        logger.trace("Unlocking Door on pin: " + this.pin.getPin().getAddress());
-        servoPin.setPwm(UNLOCKED_PWM_VALUE);
-        this.unlocked = 5;
+        logger.trace("Unlocking Door on pin: "+this.pin.getPin().getAddress());
+        servo.setPosition(UNLOCKED_VALUE);
     }
 
-    @Scheduled(fixedRate = 1000)
     public void lock() {
-        if(this.unlocked > 0) {
-            this.unlocked -= 1;
-            if(this.unlocked == 0) {
-                logger.trace("Locking Door on pin: " + this.pin.getPin().getAddress());
-                servoPin.setPwm(LOCKED_PWM_VALUE);
-            }
-        }
+        logger.trace("Locking Door on pin: " + this.pin.getPin().getAddress());
+        servo.setPosition(LOCKED_VALUE);
     }
 }

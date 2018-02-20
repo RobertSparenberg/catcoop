@@ -30,7 +30,7 @@ public abstract class IoComponent {
      * Called after the {@link IoManager} has initialized the io pins, so that it is ready to have pins registered.
      * Pins should be initialized for this object inside of this method.
      */
-    public abstract void init();
+    public abstract void init() throws ComponentInitializationException;
 
     /**
      * Clean up the pin usage of this component in this method.

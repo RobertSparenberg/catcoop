@@ -7,6 +7,7 @@ import net.frozenchaos.catcoop.io.components.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,6 +19,8 @@ public class AccessControl implements IoComponentListener {
     private Door door;
     private Camera camera;
     private Light light;
+
+    private int doorUnlocked = 0;
 
     @Autowired
     public AccessControl(IoManager ioManager) {
@@ -52,6 +55,17 @@ public class AccessControl implements IoComponentListener {
         if(component == this.rfidReader) {
             if(value.equalsIgnoreCase("1234") || value.equalsIgnoreCase("2345")) {
                 door.unlock();
+                this.doorUnlocked = 5;
+            }
+        }
+    }
+
+    @Scheduled(fixedRate = 1000)
+    public void lockDoor() {
+        if(this.doorUnlocked > 0) {
+            this.doorUnlocked -= 1;
+            if(this.doorUnlocked == 0) {
+                door.lock();
             }
         }
     }
