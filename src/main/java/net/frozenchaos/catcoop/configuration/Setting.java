@@ -1,17 +1,23 @@
 package net.frozenchaos.catcoop.configuration;
 
 public enum Setting {
-    PIN_NUMBER,
-    PIN_VALUE,
-    IS_OUTPUT;
+    SNAPSHOT_WIDTH("800"),
+    SNAPSHOT_HEIGHT("600"),
+    SNAPSHOTS_AMOUNT("3"),
+    SNAPSHOT_INTERVAL("2"),
+    ACCESS_TIMEOUT("15");
 
-    private int value = 0;
+    private String value;
 
-    public int getValue() {
+    private Setting(String defaultValue) {
+        this.value = defaultValue;
+    }
+
+    public String getValue() {
         return value;
     }
 
-    public void setValue(int value) {
+    void setValue(String value) {
         this.value = value;
     }
 }

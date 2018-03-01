@@ -1,7 +1,5 @@
 package net.frozenchaos.catcoop.io;
 
-import com.pi4j.component.servo.ServoProvider;
-import com.pi4j.component.servo.impl.RPIServoBlasterProvider;
 import com.pi4j.io.gpio.GpioController;
 import com.pi4j.io.gpio.GpioFactory;
 import org.slf4j.Logger;
@@ -18,22 +16,16 @@ import java.util.List;
 public class IoManager implements ApplicationListener<ContextRefreshedEvent> {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final GpioController gpioController;
-    private final ServoProvider servoProvider;
     private List<IoComponent> ioComponents = new ArrayList<>();
     private boolean started = false;
 
     public IoManager() throws Exception {
         logger.debug("Initializing IoManager");
         this.gpioController = GpioFactory.getInstance();
-        this.servoProvider = new RPIServoBlasterProvider();
     }
 
     public GpioController getGpioController() {
         return gpioController;
-    }
-
-    public ServoProvider getServoProvider() {
-        return servoProvider;
     }
 
     public void registerIoComponent(IoComponent ioComponent) {

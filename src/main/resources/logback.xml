@@ -27,6 +27,11 @@
     </appender>
 
     <!-- Send logs to both console and file audit -->
+
+    <logger name="org.springframework" level="info" additivity="false">
+        <appender-ref ref="FILE-AUDIT" />
+        <appender-ref ref="STDOUT" />
+    </logger>
     <logger name="net.frozenchaos.catcoop" level="trace" additivity="false">
         <appender-ref ref="FILE-AUDIT" />
         <appender-ref ref="STDOUT" />

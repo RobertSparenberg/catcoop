@@ -1,7 +1,5 @@
 package net.frozenchaos.catcoop.io.components;
 
-import com.pi4j.component.servo.ServoDriver;
-import com.pi4j.component.servo.impl.GenericServo;
 import net.frozenchaos.catcoop.io.ComponentInitializationException;
 import net.frozenchaos.catcoop.io.IoComponent;
 import net.frozenchaos.catcoop.io.IoManager;
@@ -15,7 +13,6 @@ public class Door extends IoComponent {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final IoPin pin;
-    private GenericServo servo;
 
     public Door(IoManager ioManager, IoPin pin) {
         super(ioManager);
@@ -26,8 +23,7 @@ public class Door extends IoComponent {
     public void init() throws ComponentInitializationException {
         logger.debug("Initializing Door on pin: " + this.pin.getPin().getAddress());
         try {
-            ServoDriver servoDriver = this.getIoManager().getServoProvider().getServoDriver(this.pin.getPin());
-            this.servo = new GenericServo(servoDriver, "Door Servo");
+            //todo: add servo control
         } catch(Exception e) {
             throw new ComponentInitializationException(e);
         }
@@ -36,16 +32,15 @@ public class Door extends IoComponent {
     @Override
     public void destroy() {
         logger.debug("Destroying Door on pin: " + this.pin.getPin().getAddress());
-//        this.getIoManager().getGpioController().unprovisionPin(this.servo.getServoDriver().getPin());
     }
 
     public void unlock() {
         logger.trace("Unlocking Door on pin: "+this.pin.getPin().getAddress());
-        servo.setPosition(UNLOCKED_VALUE);
+        //todo: add servo control
     }
 
     public void lock() {
         logger.trace("Locking Door on pin: " + this.pin.getPin().getAddress());
-        servo.setPosition(LOCKED_VALUE);
+        //todo: add servo control
     }
 }
