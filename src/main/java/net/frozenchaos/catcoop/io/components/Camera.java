@@ -30,6 +30,7 @@ public class Camera extends IoComponent {
             camera.setToDefaults();
             camera.turnOffPreview();
             camera.setTimeout(1);
+            camera.setVerticalFlipOn();
             camera.setEncoding(IMAGE_ENCODING);
         } catch(Exception e) {
             logger.error("Error initializing Camera", e);

@@ -20,28 +20,29 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/controlpanel")
-public class ControlPanelController {
+@RequestMapping("/pintester")
+public class PinTesterController {
+    private static final String PIN_TESTER_TEMPLATE = "pinTester";
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private IoManager ioManager;
     private Map<Integer, GpioPinDigital> pins = new HashMap<>();
 
     @Autowired
-    public ControlPanelController(IoManager ioManager) {
-        logger.info("Initializing ControlPanelController");
+    public PinTesterController(IoManager ioManager) {
+        logger.info("Initializing PinTesterController");
         this.ioManager = ioManager;
     }
 
-    @RequestMapping(value = "/tester", method = RequestMethod.GET)
-    public String testerPanel() {
-        return "tester";
+    @RequestMapping(method = RequestMethod.GET)
+    public String mainPage() {
+        return PIN_TESTER_TEMPLATE;
     }
 
-    @RequestMapping(value = "/tester/setpin", method = RequestMethod.GET)
+    @RequestMapping(value = "/setpin", method = RequestMethod.GET)
     public String setPin(@RequestParam(value="pin") int pin,
-                       @RequestParam(value="output") boolean isOutput,
-                       @RequestParam(value="value") int value) {
+                       @RequestParam(value="output", required = false, defaultValue = "true") boolean isOutput,
+                       @RequestParam(value="value", required = false, defaultValue = "1") int value) {
         logger.trace("ControlPanelController.setPin pin: " + pin + ", isOutput: " + isOutput + ", value: " + value);
         GpioController gpioController = ioManager.getGpioController();
         releasePin(gpioController, pin);
@@ -56,7 +57,7 @@ public class ControlPanelController {
             gpioPin.addListener(new InputPinListener(pin));
             pins.put(pin, gpioPin);
         }
-        return "tester";
+        return PIN_TESTER_TEMPLATE;
     }
 
     private void releasePin(GpioController gpioController, int pin) {

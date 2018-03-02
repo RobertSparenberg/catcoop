@@ -24,6 +24,12 @@ public class SettingRecord implements Serializable {
         this.value = value;
     }
 
+    /**
+     * Default constructor for use by JPA.
+     */
+    public SettingRecord() {
+    }
+
     public Setting getSetting() {
         return setting;
     }

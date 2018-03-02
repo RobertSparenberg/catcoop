@@ -1,0 +1,22 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>CatCoop Access Log Record</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<a th:href="@{/accesslog/list}">Back to list</a><br/>
+    <table>
+        <tr>
+            <td>
+                <span th:text="${#dates.format(record.timestamp, 'dd-MMM-yyyy HH:mm') + ' - ' + record.cat}"/>
+            </td>
+        </tr>
+        <tr th:each="image : ${record.images}">
+            <td>
+                <img th:src="${'data:image/jpeg;base64,' + image.getBase64String()}" />
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>CatCoop Access Log List</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+    <table>
+        <tr th:each="record : ${records}">
+            <td>
+                <a th:href="@{/accesslog/record(id=${record.id})}">
+                    <span th:text="${#dates.format(record.timestamp, 'dd-MMM-yyyy HH:mm') + ' - ' + record.cat}"/>
+                </a>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

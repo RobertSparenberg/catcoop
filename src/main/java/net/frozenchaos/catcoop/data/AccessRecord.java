@@ -30,10 +30,20 @@ public class AccessRecord implements Serializable {
         this.timestamp = new Date();
     }
 
+    /**
+     * Default constructor for use by JPA.
+     */
+    public AccessRecord() {
+    }
+
     public AccessRecord(String cat, List<Image> images) {
         this.cat = cat;
         this.timestamp = new Date();
         this.images = new ArrayList<>(images);
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getCat() {
