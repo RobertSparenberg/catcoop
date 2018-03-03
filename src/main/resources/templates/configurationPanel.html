@@ -1,0 +1,22 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>CatCoop Configuration Panel</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<table>
+    <tr th:each="setting : ${settings}">
+        <td th:text="${setting.name + ' - ' + setting.value}"/>
+    </tr>
+
+    <form th:action="@{/configuration}">
+        <input type="select">
+            <option th:each="setting : ${settings}" th:id="${setting.name}">
+                <span th:text="${setting.name}"/>
+            </option>
+        </input>
+        <input type="text"/>
+        <input type="submit"/>
+    </form>
+</table>
